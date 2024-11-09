@@ -56,7 +56,7 @@ public class TimezoneValidateFilter implements Filter {
             req.setAttribute("timezone", timezone);
             chain.doFilter(httpServletRequest, httpServletResponse);
         } catch (Exception e) {
-            httpServletResponse.setContentType("text/html");
+            httpServletResponse.setContentType("text/html; charset=UTF-8");
             httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             try (PrintWriter out = httpServletResponse.getWriter()) {
                 out.println("<html><body>");

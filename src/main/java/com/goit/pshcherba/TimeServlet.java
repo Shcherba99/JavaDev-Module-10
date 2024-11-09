@@ -37,7 +37,7 @@ public class TimeServlet extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        resp.setContentType("text/html");
+        resp.setContentType("text/html; charset=UTF-8");
 
         String timezone = (String) req.getAttribute("timezone");
 
