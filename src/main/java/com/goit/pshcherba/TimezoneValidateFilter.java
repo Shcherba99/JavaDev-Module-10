@@ -2,6 +2,7 @@ package com.goit.pshcherba;
 
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebFilter;
+import jakarta.servlet.http.HttpFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -21,7 +22,7 @@ import java.time.ZoneId;
  * @see Filter
  */
 @WebFilter("/time")
-public class TimezoneValidateFilter implements Filter {
+public class TimezoneValidateFilter extends HttpFilter {
 
     /**
      * Validates the "timezone" parameter of the HTTP request.
@@ -36,16 +37,13 @@ public class TimezoneValidateFilter implements Filter {
      * @throws ServletException if the request could not be handled
      */
     @Override
-    public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws IOException, ServletException {
-        HttpServletRequest httpServletRequest = (HttpServletRequest) req;
-        HttpServletResponse httpServletResponse = (HttpServletResponse) resp;
-
+    public void doFilter(HttpServletRequest req, HttpServletResponse resp, FilterChain chain) throws IOException, ServletException {
         String timezone = req.getParameter("timezone");
 
         if (timezone == null || timezone.isEmpty()) {
             timezone = "UTC+0";
             req.setAttribute("timezone", timezone);
-            chain.doFilter(httpServletRequest, httpServletResponse);
+            chain.doFilter(req, resp);
             return;
         }
 
@@ -54,11 +52,11 @@ public class TimezoneValidateFilter implements Filter {
         try {
             System.out.println("ZoneID: " + ZoneId.of(timezone));
             req.setAttribute("timezone", timezone);
-            chain.doFilter(httpServletRequest, httpServletResponse);
+            chain.doFilter(req, resp);
         } catch (Exception e) {
-            httpServletResponse.setContentType("text/html; charset=UTF-8");
-            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            try (PrintWriter out = httpServletResponse.getWriter()) {
+            resp.setContentType("text/html; charset=UTF-8");
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            try (PrintWriter out = resp.getWriter()) {
                 out.println("<html><body>");
                 out.println("<h1>Invalid timezone</h1>");
                 out.println("</body></html>");
